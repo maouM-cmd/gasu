@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Customer, MeterReading, Invoice
 from django.utils import timezone
 from .forms import CustomerForm
@@ -9,6 +10,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 
 
+@login_required
 def invoice_pdf(request, pk):
     invoice = Invoice.objects.filter(pk=pk).select_related('customer').first()
     if not invoice:
@@ -26,11 +28,13 @@ def invoice_pdf(request, pk):
         return HttpResponse(html)
 
 
+@login_required
 def customer_list(request):
     customers = Customer.objects.all()
     return render(request, 'billing/customer_list.html', {'customers': customers})
 
 
+@login_required
 def customer_create(request):
     if request.method == 'POST':
         form = CustomerForm(request.POST)
@@ -42,6 +46,7 @@ def customer_create(request):
     return render(request, 'billing/customer_form.html', {'form': form, 'title': '新規顧客登録'})
 
 
+@login_required
 def customer_edit(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == 'POST':
@@ -54,6 +59,7 @@ def customer_edit(request, pk):
     return render(request, 'billing/customer_form.html', {'form': form, 'title': '顧客編集'})
 
 
+@login_required
 def meter_input(request):
     if request.method == 'POST':
         customer_id = request.POST.get('customer')
@@ -66,11 +72,13 @@ def meter_input(request):
     return render(request, 'billing/meter_input.html', {'customers': customers})
 
 
+@login_required
 def invoice_list(request):
     invoices = Invoice.objects.order_by('-date').all()
     return render(request, 'billing/invoice_list.html', {'invoices': invoices})
 
 
+@login_required
 def generate_invoices_view(request):
     if request.method != 'POST':
         return redirect('billing:invoice_list')
@@ -86,6 +94,7 @@ def generate_invoices_view(request):
     return redirect('billing:invoice_list')
 
 
+@login_required
 def clear_created_invoices(request):
     if request.method == 'POST':
         request.session.pop('created_invoice_ids', None)

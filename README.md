@@ -151,3 +151,222 @@ pip install psycopg2-binary
 
 ---
 
+
+## 本番環境へのデプロイ
+
+### 前提条件
+- Ubuntu 20.04 LTS 以上または同等のサーバ
+- PostgreSQL 12 以上（推奨）
+- Nginx 1.18 以上
+- Python 3.9 以上
+
+### 環境構築手順
+
+1. **サーバのセットアップ**
+
+```bash
+# パッケージ更新
+sudo apt update && sudo apt upgrade -y
+
+# PostgreSQL インストール（例）
+sudo apt install -y postgresql postgresql-contrib
+
+# Nginx インストール
+sudo apt install -y nginx
+
+# Python 環境
+sudo apt install -y python3.11 python3.11-venv python3.11-dev
+
+# その他必要なライブラリ
+sudo apt install -y build-essential libpq-dev libcairo2-dev libpango1.0-dev
+```
+
+2. **アプリケーション展開**
+
+```bash
+# アプリケーションディレクトリ作成
+sudo mkdir -p /opt/gasu
+cd /opt/gasu
+
+# リポジトリをクローン
+sudo git clone https://github.com/your-repo/gasu.git .
+
+# 所有権設定
+sudo chown -R gasu:gasu /opt/gasu
+```
+
+3. **環境変数設定**
+
+```bash
+# .env ファイルを作成
+cp .env.example .env
+
+# .env を編集
+sudo nano .env
+# SECRET_KEY, DB_PASSWORD, ALLOWED_HOSTS 等を設定
+```
+
+4. **仮想環境と依存インストール**
+
+```bash
+cd /opt/gasu
+
+# 仮想環境作成
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# 依存インストール（本番向けsettings_prodを使用）
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+5. **PostgreSQL データベース設定**
+
+```bash
+# PostgreSQL に接続
+sudo -u postgres psql
+
+# ユーザとデータベース作成
+CREATE USER gasu_user WITH PASSWORD 'your-password';
+CREATE DATABASE gasu_db OWNER gasu_user;
+ALTER ROLE gasu_user SET client_encoding TO 'utf8';
+ALTER ROLE gasu_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE gasu_user SET default_transaction_deferrable TO on;
+ALTER ROLE gasu_user SET default_transaction_level TO 'read committed';
+\q
+```
+
+6. **Django マイグレーション**
+
+```bash
+cd /opt/gasu
+source .venv/bin/activate
+export DJANGO_SETTINGS_MODULE=web.settings_prod
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+7. **システムユーザー作成**
+
+```bash
+# システムユーザ（gasu）作成
+sudo useradd -m -s /bin/bash gasu || true
+```
+
+8. **Gunicorn と systemd 設定**
+
+```bash
+# systemd service ファイルをコピー
+sudo cp deploy/gasu.service /etc/systemd/system/
+
+# service ファイルを編集（パスを確認）
+sudo nano /etc/systemd/system/gasu.service
+
+# systemd リロード
+sudo systemctl daemon-reload
+
+# サービス有効化・起動
+sudo systemctl enable gasu
+sudo systemctl start gasu
+
+# ステータス確認
+sudo systemctl status gasu
+```
+
+9. **Nginx 設定**
+
+```bash
+# Nginx 設定をコピー
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/gasu
+
+# シンボリックリンク作成
+sudo ln -s /etc/nginx/sites-available/gasu /etc/nginx/sites-enabled/
+
+# 既存デフォルト設定を削除（オプション）
+sudo rm /etc/nginx/sites-enabled/default
+
+# Nginx 設定をテスト
+sudo nginx -t
+
+# Nginx 再起動
+sudo systemctl restart nginx
+```
+
+10. **SSL 証明書（Let's Encrypt）**
+
+```bash
+# Certbot インストール
+sudo apt install -y certbot python3-certbot-nginx
+
+# 証明書取得
+sudo certbot certonly --nginx -d example.com -d www.example.com
+
+# Nginx 設定で HTTPS を有効化（deploy/nginx.conf の HTTPS セクションをコメント解除）
+# その後 nginx -t && systemctl restart nginx
+```
+
+11. **バックアップスケジュール設定**
+
+```bash
+# Crontab 編集
+sudo crontab -e -u gasu
+
+# 毎日 2 時にバックアップ
+0 2 * * * cd /opt/gasu && source .venv/bin/activate && python manage.py backup_db
+
+# バックアップファイルを暗号化（オプション）
+# 15 2 * * * gpg --symmetric --cipher-algo AES256 /opt/gasu/backups/db_*.sqlite3.gz > /dev/null 2>&1
+```
+
+### デプロイ後のチェック
+
+```bash
+# ログ確認
+sudo tail -f /opt/gasu/logs/error.log
+
+# Gunicorn ステータス確認
+sudo systemctl status gasu
+
+# Nginx ステータス確認
+sudo systemctl status nginx
+
+# ブラウザでアクセス
+# https://example.com
+```
+
+###セキュリティ点検リスト
+
+- [ ] `SECRET_KEY` が強力なランダム値に設定されているか
+- [ ] `DEBUG = False` に設定されているか
+- [ ] `ALLOWED_HOSTS` に本番ドメインを指定しているか
+- [ ] PostgreSQL ユーザーで強力なパスワードを使用しているか
+- [ ] SSL 証明書が有効か（https:// で接続できるか）
+- [ ] バックアップスケジュールが設定されているか
+- [ ] ファイアウォール（ufw）で不要なポートを閉じているか
+- [ ] 定期的なセキュリティアップデートを行う体制になっているか
+
+### トラブルシューティング
+
+**Gunicorn が起動しない**
+
+```bash
+sudo systemctl restart gasu
+sudo journalctl -u gasu -n 20
+```
+
+**Nginx が接続できない**
+
+```bash
+sudo nginx -t
+curl -I http://127.0.0.1:8000
+```
+
+**データベース接続エラー**
+
+```bash
+# .env の DB_* 設定を確認
+psql -U gasu_user -d gasu_db -h localhost
+```
+
+---
+
