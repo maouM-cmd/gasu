@@ -57,6 +57,20 @@ pip install -r requirements.txt
 pytest -q
 ```
 
+## Docker での起動（簡易）
+
+```bash
+# ビルドして起動
+docker compose up --build
+# コンテナ内部でマイグレーション
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py create_demo
+```
+
+## バックアップ
+- SQLite を使う場合は `python manage.py backup_db` で `backups/` 配下に gz 圧縮されたダンプが作成されます。
+
+
 （`tests/test_billing_tariff.py` に料金計算の単体テストがあります）
 
 ## 次フェーズ（優先順）

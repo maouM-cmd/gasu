@@ -4,6 +4,7 @@ from django.utils import timezone
 from .forms import CustomerForm
 from django.contrib import messages
 from .utils import generate_invoices_for_all
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
@@ -76,8 +77,17 @@ def generate_invoices_view(request):
     created = generate_invoices_for_all()
     ids = [str(i.id) for i in created]
     if ids:
+        # store IDs in session so UI can show a modal with details
+        request.session['created_invoice_ids'] = ids
         messages.success(request, f'作成された請求: {len(created)} 件')
-        messages.info(request, '作成された請求ID: ' + ', '.join(ids))
+        messages.info(request, '作成された請求IDが表示されます')
     else:
         messages.info(request, '新しい請求は作成されませんでした')
     return redirect('billing:invoice_list')
+
+
+def clear_created_invoices(request):
+    if request.method == 'POST':
+        request.session.pop('created_invoice_ids', None)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False}, status=405)
