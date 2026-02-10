@@ -1,74 +1,102 @@
-# gasu
-# Codex task
-
-## ステータス
-- 現状: CLIで動くMVPコアまで実装済み
-	- 料金計算ロジック: 実装済み
-	- SQLiteスキーマ: 実装済み
-	- CLI操作: 検針→請求→入金の基本操作が可能
-	- 請求計算テスト: 実装済み
-	- 未実装（次フェーズ／READMEに明記）: Django Web画面、請求書/領収書PDF、高齢者向けUI最適化、操作ログ/バックアップ自動化
-
-## 次フェーズ
-- Djangoの画面実装（顧客一覧・検針入力・請求一覧）をまず実装します。
-	- 目標: Web UIでの基本ワークフロー確認（検針入力→請求生成→入金反映）
-	- 以降: PDF出力・運用自動化・アクセシビリティ最適化を順次実装
-
-（この変更はリモートに新ブランチを作成し、PRを作成して進めます）
-
-## 実装済み（このPRで反映された主な内容）
-- Django最小骨組み（`web`プロジェクト）と `billing` アプリのスキャフォールド
-- モデル: `Customer`, `MeterReading`, `Invoice`, `Payment` の基礎実装
-- `Customer` に料金プラン／税率フィールドを追加
-- 料金計算ロジックを `billing/tariff.py` に実装（単体テストあり）
-- UI: 顧客一覧 / 検針入力 / 請求一覧 のテンプレート（Bootstrapで高齢者向け配慮）
-- PDF出力の雛形（WeasyPrintを用いた `invoice_pdf` ビューとテンプレート）
-- 開発用管理コマンド `python manage.py create_demo` を追加
-
-## 🚀 クイックスタート
-
-### 🌐 パターン A: オンラインで即座に試す（最速）
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/maouM-cmd/gasu)
-
-1. 上のボタンをクリック
-2. GitHub でログイン
-3. `Deploy` をクリック
-4. デプロイ完了後、自動生成されたURLにアクセス
-
-**デモユーザー:**
-- ユーザー: `demo`
-- パスワード: `demo123`
+# gasu ⛽
+ガス料金管理システム - 高齢者にも使いやすいシンプル設計
 
 ---
 
-### 💻 パターン B: Docker Compose で一瞬で起動
+## 🚀 クイックスタート（3つの方法）
+
+### ⚡ **最速：Streamlit Cloud で無料・ワンクリック起動**
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/cloud)
+
+**推奨：高齢者にも最適なシンプルな UI**
+
+1. [gasu リポジトリをフォーク](https://github.com/maouM-cmd/gasu/fork)
+
+2. [Streamlit Cloud](https://streamlit.io/cloud) にアクセス
+
+3. **「New app」→「Deploy an app」** を選択
+
+4. フォークしたリポを入力:
+   ```
+   https://github.com/{your-username}/gasu
+   App URL: streamlit_app.py
+   ```
+
+5. **Deploy** をクリック → **即座に公開 URL が生成** 🎉
+
+**デモ顧客は自動作成されます**（初回アクセス時は 初期状態）
+
+---
+
+### 🐳 **Docker Compose で一瞬で起動**
 
 ```bash
+cd /workspaces/gasu
 docker-compose up --build
 ```
 
-ブラウザで **http://localhost:8000** を開く
+ブラウザ: **http://localhost:8000**
+1. フォークしたリポを入力:
+   ```
+   https://github.com/{your-username}/gasu
+   App URL: streamlit_app.py
+   ```
 
-**デモユーザー:**
-- ユーザー: `demo`
-- パスワード: `demo123`
+2. **Deploy** をクリック → **即座に公開 URL が生成** 🎉
 
 ---
 
-### 🖥️ パターン C: ローカル仮想環境で起動（スクリプト使用）
+### 💻 ローカル仮想環境で起動（開発者向け）
 
 ```bash
-chmod +x scripts/run-local.sh
-./scripts/run-local.sh
+pip install -r requirements-streamlit.txt
+streamlit run streamlit_app.py
 ```
 
-このスクリプトが以下を自動実行します：
-- ✅ 仮想環境作成
-- ✅ 依存パッケージ インストール
-- ✅ DB マイグレーション
-- ✅ デモデータ生成
-- ✅ サーバ起動
+ブラウザ: **http://localhost:8501**
+
+---
+
+## 📊 実装済み機能
+
+- ✅ **📊 顧客一覧**: 登録済みの全顧客を表示
+- ✅ **👤 顧客登録**: 新規顧客の追加（基本料金・単価・税率設定）
+- ✅ **📏 検針入力**: 検針値の記録、日付管理
+- ✅ **💵 請求管理**: 自動生成、入金記録、一覧表示
+- ✅ **🔄 自動計算**: 検針差分から料金を自動計算
+- ✅ **💾 SQLite DB**: ローカルに永続化（クラウド対応）
+- ✅ **🎯 高齢者UI**: シンプル・大きなボタン・直感的操作
+
+---
+
+## 📁 ディレクトリ構成
+
+```
+gasu/
+├── streamlit_app.py           # 🌟 Streamlit メインアプリ
+├── requirements-streamlit.txt # Streamlit 用依存
+├── .streamlit/
+│   └── config.toml           # Streamlit 設定（テーマ等）
+│
+├── web/                       # Django プロジェクト（代替案）
+├── billing/                   # Django アプリ
+├── docker-compose.yml         # Docker 設定
+└── README.md                  # この ファイル
+```
+
+---
+
+## 🔧 Django 版も利用可能
+
+Streamlit の代わりに Django を使う場合：
+
+```bash
+# Django 版起動
+docker-compose up --build
+```
+
+→ ログイン画面有、PDF 生成機能あり、より高度な機能
 
 ---
 
@@ -78,37 +106,40 @@ chmod +x scripts/run-local.sh
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-streamlit.txt
 ```
 
-2. マイグレーションとデモデータ作成
+2. Streamlit アプリを起動
 
 ```bash
-python manage.py migrate
-python manage.py create_demo
+streamlit run streamlit_app.py
 ```
 
-3. 開発サーバ起動
-
-```bash
-python manage.py runserver
-# ブラウザで http://127.0.0.1:8000/ を開く
-```
-
-注意: `WeasyPrint` はネイティブ依存（cairo, pango, gdk-pixbuf 等）が必要な場合があります。Linuxで不足する場合はパッケージマネージャでインストールしてください。
+ブラウザ: **http://localhost:8501** に自動で開きます
 
 ---
 
-## 📋 実装済みの機能
+## 🎯 使途別ガイド
 
-- ✅ **ユーザー認証**: ログイン画面、セッション管理（`@login_required`）
-- ✅ **顧客管理**: 一覧表示﻿、作成、編集（ModelForm）
-- ✅ **検針管理**: 検針値入力、日付・顧客ごと記録、過去データ表示
-- ✅ **請求自動生成**: 検針差分から自動計算、消費量マイナス値のスキップ、同一日重複排除
-- ✅ **料金計算**: 基本料金 + 従量料金 ＋ 税金（小数点対応）
-- ✅ **請求管理**: 請求一覧、入金状態表示、PDF ダウンロード
-- ✅ **PDF生成**: WeasyPrint による請求書 PDF 出力（A4 対応）
-- ✅ **監査ログ**: すべての操作を記録、タイムスタンプ付き
+### 親御さん・ユーザー向け
+→ **Streamlit Cloud で公開 URL をクリック**（推奨）
+- セットアップ不要
+- いつでもアクセス可能
+- シンプルな操作
+
+### 開発者向け（ローカル開発）
+```bash
+streamlit run streamlit_app.py
+```
+
+### 小規模ビジネス向け（本番環境）
+→ **Render.com（クラウド）** または **VPS（自前）**:
+
+```bash
+docker-compose up -d
+```
+
+---
 - ✅ **バックアップ**: DB 自動バックアップ（gzip 圧縮）
 - ✅ **テスト**: 料金計算、請求生成、エッジケース（pytest）
 - ✅ **Deploy**: Docker/Compose、Gunicorn、Nginx、systemd、PostgreSQL対応
