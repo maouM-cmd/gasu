@@ -81,3 +81,73 @@ docker compose exec web python manage.py create_demo
 
 ---
 更新はブランチ `feature/django-ui-start` に push されています。PR: https://github.com/maouM-cmd/gasu/pull/2
+
+## 運用ガイド
+
+### 自動バックアップの設定
+
+サーバ上で定期的なバックアップを実行するには、crontab を利用できます：
+
+```bash
+# 毎日 深夜 2 時にバックアップ実行
+0 2 * * * cd /path/to/gasu && python manage.py backup_db
+```
+
+または systemd timer:
+
+```ini
+[Unit]
+Description=GASU Database Backup
+After=network.target
+
+[Timer]
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+
+[Install]
+WantedBy=timers.target
+```
+
+### データのセキュリティ
+
+#### バックアップファイルの暗号化
+
+本番環境では、バックアップファイルを暗号化することを推奨します：
+
+```bash
+# gpg で暗号化
+gpg --symmetric --cipher-algo AES256 backups/db_*.sqlite3.gz
+
+# 復号化
+gpg --decrypt backups/db_*.sqlite3.gz.gpg | gunzip > db_restored.sqlite3
+```
+
+また、バックアップファイルは 600 権限（所有者のみ読取可）に設定し、別のストレージ（S3、外部ディスク等）に保存することを推奨します。
+
+#### データベースアクセス制御
+
+- **開発環境**: SQLite（ローカル）、認証なし（許容）
+- **本番環境**: PostgreSQL への移行を推奨（ユーザ認証、SSL接続、バックアップ等が充実）
+
+```bash
+# PostgreSQL への移行例
+pip install psycopg2-binary
+# settings.py の DATABASES を以下に変更
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'gasu_db',
+#        'USER': 'gasu_user',
+#        'PASSWORD': '...',
+#        'HOST': 'db.example.com',
+#        'PORT': '5432',
+#    }
+# }
+```
+
+#### 監査ログ
+
+`billing/models.py` の `AuditLog` モデルですべての重要操作（請求作成、入金確認等）がログされます。管理画面で確認できます。
+
+---
+
