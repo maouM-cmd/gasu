@@ -1,0 +1,21 @@
+[Unit]
+Description=GASU Gunicorn Application
+After=network.target
+
+[Service]
+User=gasu
+Group=www-data
+WorkingDirectory=/path/to/gasu
+ExecStart=/path/to/gasu/.venv/bin/gunicorn web.wsgi:application \
+    --bind 127.0.0.1:8000 \
+    --workers 4 \
+    --worker-class sync \
+    --timeout 60 \
+    --access-logfile /path/to/gasu/logs/access.log \
+    --error-logfile /path/to/gasu/logs/error.log
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

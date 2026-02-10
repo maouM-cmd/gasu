@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}請求一覧 - GASU{% endblock %}
+{% block content %}
+  <h1 class="h4 mb-3">請求一覧</h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div></div>
+    <form method="post" action="{% url 'billing:generate_invoices' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-primary">請求を生成</button>
+    </form>
+  </div>
+  <div class="list-group">
+    {% for i in invoices %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <div><strong>{{ i.customer.name }}</strong></div>
+          <div class="text-muted">{{ i.date }}</div>
+        </div>
+        <div class="text-end">
+          <div>{{ i.amount }}</div>
+          <div>{% if i.paid %}<span class="badge bg-success">支払済</span>{% else %}<span class="badge bg-warning text-dark">未払い</span>{% endif %}</div>
+          <div class="mt-2"><a class="btn btn-outline-primary btn-sm" href="{% url 'billing:invoice_pdf' i.id %}">請求書PDF</a></div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="alert alert-secondary">請求がありません。</div>
+    {% endfor %}
+  </div>
+{% endblock %}
