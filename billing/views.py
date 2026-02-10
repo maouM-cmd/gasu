@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Customer, MeterReading, Invoice
 from django.utils import timezone
 from .forms import CustomerForm
+from django.contrib import messages
+from .utils import generate_invoices_for_all
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
@@ -66,3 +68,11 @@ def meter_input(request):
 def invoice_list(request):
     invoices = Invoice.objects.order_by('-date').all()
     return render(request, 'billing/invoice_list.html', {'invoices': invoices})
+
+
+def generate_invoices_view(request):
+    if request.method != 'POST':
+        return redirect('billing:invoice_list')
+    created = generate_invoices_for_all()
+    messages.success(request, f'作成された請求: {len(created)} 件')
+    return redirect('billing:invoice_list')

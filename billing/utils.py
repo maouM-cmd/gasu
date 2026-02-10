@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.db import transaction
-from .models import Customer, MeterReading, Invoice
+from .models import Customer, MeterReading, Invoice, AuditLog
 from .tariff import calculate_invoice_amounts
 
 
@@ -38,4 +38,15 @@ def generate_invoices_for_all():
                 paid=False,
             )
             created.append(inv)
+            # 記録を残す
+            try:
+                AuditLog.objects.create(
+                    actor='system',
+                    action_type='generate_invoice',
+                    target_table='Invoice',
+                    target_id=inv.id,
+                    payload=f'usage={usage}, subtotal={amounts["subtotal"]}, tax={amounts["tax"]}, total={amounts["total"]}'
+                )
+            except Exception:
+                pass
     return created

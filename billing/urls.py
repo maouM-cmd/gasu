@@ -10,4 +10,5 @@ urlpatterns = [
     path('meter/', views.meter_input, name='meter_input'),
     path('invoices/', views.invoice_list, name='invoice_list'),
     path('invoice/<int:pk>/pdf/', views.invoice_pdf, name='invoice_pdf'),
+    path('invoices/generate/', views.generate_invoices_view, name='generate_invoices'),
 ]

@@ -41,3 +41,15 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.id} - {self.amount}"
+
+
+class AuditLog(models.Model):
+    actor = models.CharField(max_length=200, blank=True)
+    action_type = models.CharField(max_length=100)
+    target_table = models.CharField(max_length=100, blank=True)
+    target_id = models.IntegerField(null=True, blank=True)
+    payload = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.created_at.isoformat()} {self.action_type} by {self.actor}"
