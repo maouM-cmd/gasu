@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>請求書 - {{ invoice.id }}</title>
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 12pt; }
+      header { margin-bottom: 20px; }
+      .right { text-align: right; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { padding: 6px; border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>請求書</h2>
+      <div>請求番号: {{ invoice.id }}</div>
+      <div>発行日: {{ invoice.date }}</div>
+    </header>
+    <section>
+      <h3>請求先</h3>
+      <div>{{ invoice.customer.name }}</div>
+      <div>{{ invoice.customer.address }}</div>
+    </section>
+    <section>
+      <h3>明細</h3>
+      <table>
+        <thead>
+          <tr><th>項目</th><th class="right">金額 (円)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>請求合計</td><td class="right">{{ invoice.amount }}</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <footer style="margin-top:30px;">
+      <div>備考: {{ invoice.id }}</div>
+    </footer>
+  </body>
+</html>

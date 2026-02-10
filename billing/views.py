@@ -1,6 +1,25 @@
 from django.shortcuts import render, redirect
 from .models import Customer, MeterReading, Invoice
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+
+
+def invoice_pdf(request, pk):
+    invoice = Invoice.objects.filter(pk=pk).select_related('customer').first()
+    if not invoice:
+        return HttpResponse('Invoice not found', status=404)
+    html = render_to_string('billing/invoice_pdf.html', {'invoice': invoice})
+    try:
+        from weasyprint import HTML
+        pdf = HTML(string=html).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = f"invoice_{invoice.id}.pdf"
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+        return response
+    except Exception:
+        # If WeasyPrint is not available or fails, return HTML for debugging
+        return HttpResponse(html)
 
 
 def customer_list(request):
