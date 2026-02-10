@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import transaction
+from django.db.models import Max
 from .models import Customer, MeterReading, Invoice, AuditLog
 from .tariff import calculate_invoice_amounts
 
@@ -15,7 +16,14 @@ def generate_invoices_for_all():
     created = []
     customers = Customer.objects.all()
     for c in customers:
-        readings = list(MeterReading.objects.filter(customer=c).order_by('date'))
+        # 同日の複数検針がある場合は最新(idの最大)を採用する
+        qs = MeterReading.objects.filter(customer=c)
+        if qs.count() < 2:
+            continue
+        # 各日付ごとに最新のidを取得
+        per_day = qs.values('date').annotate(max_id=Max('id')).order_by('date')
+        # 実際の最新検針レコードを日付順で取得
+        readings = [MeterReading.objects.get(pk=item['max_id']) for item in per_day]
         if len(readings) < 2:
             continue
         prev = readings[-2]
@@ -26,7 +34,18 @@ def generate_invoices_for_all():
             continue
         usage = (Decimal(curr.value) - Decimal(prev.value))
         if usage < 0:
-            usage = Decimal('0')
+            # メーター逆転や入力ミスの可能性: ログを残してスキップ
+            try:
+                AuditLog.objects.create(
+                    actor='system',
+                    action_type='skip_negative_usage',
+                    target_table='MeterReading',
+                    target_id=curr.id,
+                    payload=f'curr={curr.value}, prev={prev.value}'
+                )
+            except Exception:
+                pass
+            continue
         amounts = calculate_invoice_amounts(
             Decimal(c.plan_basic_fee), Decimal(c.plan_unit_price), usage, Decimal(c.tax_rate)
         )

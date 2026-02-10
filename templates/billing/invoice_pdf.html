@@ -4,11 +4,13 @@
     <meta charset="utf-8">
     <title>請求書 - {{ invoice.id }}</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 12pt; }
+      @page { size: A4; margin: 20mm; }
+      body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12pt; }
       header { margin-bottom: 20px; }
       .right { text-align: right; }
       table { width: 100%; border-collapse: collapse; }
       th, td { padding: 6px; border: 1px solid #ccc; }
+      .no-break { page-break-inside: avoid; }
     </style>
   </head>
   <body>

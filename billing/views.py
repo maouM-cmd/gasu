@@ -74,5 +74,10 @@ def generate_invoices_view(request):
     if request.method != 'POST':
         return redirect('billing:invoice_list')
     created = generate_invoices_for_all()
-    messages.success(request, f'作成された請求: {len(created)} 件')
+    ids = [str(i.id) for i in created]
+    if ids:
+        messages.success(request, f'作成された請求: {len(created)} 件')
+        messages.info(request, '作成された請求ID: ' + ', '.join(ids))
+    else:
+        messages.info(request, '新しい請求は作成されませんでした')
     return redirect('billing:invoice_list')
