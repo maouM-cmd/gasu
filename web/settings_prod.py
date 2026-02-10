@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from decouple import config, Csv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -50,8 +51,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web.wsgi.application'
 
-# Database: Support SQLite (dev) and PostgreSQL (prod)
-if config('DB_ENGINE', default='sqlite') == 'postgresql':
+# Database: Support SQLite (dev), PostgreSQL (prod), and DATABASE_URL (Render/Heroku)
+if config('DATABASE_URL', default=None):
+    # Render.com / Heroku style DATABASE_URL
+    DATABASES = {'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600)}
+elif config('DB_ENGINE', default='sqlite') == 'postgresql':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

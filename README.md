@@ -25,9 +25,24 @@
 - PDF出力の雛形（WeasyPrintを用いた `invoice_pdf` ビューとテンプレート）
 - 開発用管理コマンド `python manage.py create_demo` を追加
 
-## 🚀 クイックスタート（最も簡単）
+## 🚀 クイックスタート
 
-### パターン A: Docker Compose で一瞬で起動
+### 🌐 パターン A: オンラインで即座に試す（最速）
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/maouM-cmd/gasu)
+
+1. 上のボタンをクリック
+2. GitHub でログイン
+3. `Deploy` をクリック
+4. デプロイ完了後、自動生成されたURLにアクセス
+
+**デモユーザー:**
+- ユーザー: `demo`
+- パスワード: `demo123`
+
+---
+
+### 💻 パターン B: Docker Compose で一瞬で起動
 
 ```bash
 docker-compose up --build
@@ -39,7 +54,9 @@ docker-compose up --build
 - ユーザー: `demo`
 - パスワード: `demo123`
 
-### パターン B: ローカル仮想環境で起動（スクリプト使用）
+---
+
+### 🖥️ パターン C: ローカル仮想環境で起動（スクリプト使用）
 
 ```bash
 chmod +x scripts/run-local.sh
@@ -417,4 +434,60 @@ psql -U gasu_user -d gasu_db -h localhost
 ```
 
 ---
+
+## 🌐 Render.com へのワンクリックデプロイ
+
+### セットアップ（初回のみ）
+
+1. **GitHub アカウント**に本リポジトリをフォーク:  
+   https://github.com/maouM-cmd/gasu/fork
+
+2. **Render.com にログイン**:  
+   https://render.com
+
+3. **以下のボタンをクリック**:
+
+   [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/maouM-cmd/gasu)
+
+4. フォームで以下を入力:
+   - **Service Name**: `gasu` (任意)
+   - **Repository**: `https://github.com/{your-username}/gasu`
+   - **Branch**: `feature/django-ui-start` (または `main`)
+   - **Build Command**: 自動設定
+   - **Start Command**: 自動設定
+
+5. **確認画面で Deploy ボタンをクリック**
+
+6. デプロイが完了すると、自動生成されたURLが表示されます（例: `https://gasu-xxxx.onrender.com`）
+
+### デプロイ後
+
+- ブラウザでURLにアクセス
+- ログイン画面が表示されます
+- **デモ画面を見たい場合**:
+  - プロジェクトのダッシュボードで「Shell」タブを開き、以下を実行:
+    ```bash
+    python manage.py create_demo
+    ```
+  - ユーザー: `demo` / パスワード: `demo123`
+
+### トラブルシューティング（Render）
+
+**デプロイが失敗する**
+
+- ダッシュボードの「Logs」タブでエラーを確認
+- `requirements.txt` に必要なパッケージが含まれているかチェック
+
+**データベース接続エラー**
+
+- Render が自動生成した PostgreSQL サービスをアプリが正しく参照しているか確認
+- `render.yaml` ファイルが存在するか確認
+
+**Render 上での Static Files / Media Files**
+
+- Render では SQLite が永続化されない（コンテナの再起動時に消失）
+- 本番運用では環境変数 `DATABASE_URL` で PostgreSQL を使用（自動セットアップ済み）
+
+---
+
 
