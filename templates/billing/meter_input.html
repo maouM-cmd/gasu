@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>検針入力</title>
+  </head>
+  <body>
+    <h1>検針入力</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label>顧客:
+        <select name="customer">
+          {% for c in customers %}
+          <option value="{{ c.id }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>値: <input name="value" /></label>
+      <label>日付: <input name="date" type="date" /></label>
+      <button type="submit">登録</button>
+    </form>
+    <p><a href="{% url 'billing:customer_list' %}">顧客一覧</a> | <a href="{% url 'billing:invoice_list' %}">請求一覧</a></p>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>請求一覧</title>
+  </head>
+  <body>
+    <h1>請求一覧</h1>
+    <ul>
+      {% for i in invoices %}
+      <li>{{ i.date }} - {{ i.customer.name }} - {{ i.amount }} - {% if i.paid %}支払済{% else %}未払い{% endif %}</li>
+      {% empty %}
+      <li>請求がありません。</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'billing:customer_list' %}">顧客一覧</a> | <a href="{% url 'billing:meter_input' %}">検針入力</a></p>
+  </body>
+</html>
