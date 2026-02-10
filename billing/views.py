@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Customer, MeterReading, Invoice
 from django.utils import timezone
+from .forms import CustomerForm
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
@@ -25,6 +26,29 @@ def invoice_pdf(request, pk):
 def customer_list(request):
     customers = Customer.objects.all()
     return render(request, 'billing/customer_list.html', {'customers': customers})
+
+
+def customer_create(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('billing:customer_list')
+    else:
+        form = CustomerForm()
+    return render(request, 'billing/customer_form.html', {'form': form, 'title': '新規顧客登録'})
+
+
+def customer_edit(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('billing:customer_list')
+    else:
+        form = CustomerForm(instance=customer)
+    return render(request, 'billing/customer_form.html', {'form': form, 'title': '顧客編集'})
 
 
 def meter_input(request):

@@ -3,15 +3,18 @@
 {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h4">顧客一覧</h1>
-    <a class="btn btn-primary large-btn" href="#" role="button">新規顧客</a>
+    <a class="btn btn-primary large-btn" href="{% url 'billing:customer_create' %}" role="button">新規顧客</a>
   </div>
   <div class="list-group">
     {% for c in customers %}
-      <div class="list-group-item">
-        <div class="d-flex w-100 justify-content-between">
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
           <h5 class="mb-1">{{ c.name }}</h5>
+          <p class="mb-1">{{ c.address|default:'住所未登録' }}</p>
         </div>
-        <p class="mb-1">{{ c.address|default:'住所未登録' }}</p>
+        <div>
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'billing:customer_edit' c.id %}">編集</a>
+        </div>
       </div>
     {% empty %}
       <div class="alert alert-secondary">顧客が登録されていません。</div>
