@@ -25,11 +25,41 @@
 - PDF出力の雛形（WeasyPrintを用いた `invoice_pdf` ビューとテンプレート）
 - 開発用管理コマンド `python manage.py create_demo` を追加
 
-## ローカルでの起動手順（開発者向け）
+## 🚀 クイックスタート（最も簡単）
+
+### パターン A: Docker Compose で一瞬で起動
+
+```bash
+docker-compose up --build
+```
+
+ブラウザで **http://localhost:8000** を開く
+
+**デモユーザー:**
+- ユーザー: `demo`
+- パスワード: `demo123`
+
+### パターン B: ローカル仮想環境で起動（スクリプト使用）
+
+```bash
+chmod +x scripts/run-local.sh
+./scripts/run-local.sh
+```
+
+このスクリプトが以下を自動実行します：
+- ✅ 仮想環境作成
+- ✅ 依存パッケージ インストール
+- ✅ DB マイグレーション
+- ✅ デモデータ生成
+- ✅ サーバ起動
+
+---
+
+## ローカルでの起動手順（開発者向け・詳細）
 1. 仮想環境を作る（推奨）
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -50,7 +80,25 @@ python manage.py runserver
 
 注意: `WeasyPrint` はネイティブ依存（cairo, pango, gdk-pixbuf 等）が必要な場合があります。Linuxで不足する場合はパッケージマネージャでインストールしてください。
 
-## テスト実行方法
+---
+
+## 📋 実装済みの機能
+
+- ✅ **ユーザー認証**: ログイン画面、セッション管理（`@login_required`）
+- ✅ **顧客管理**: 一覧表示﻿、作成、編集（ModelForm）
+- ✅ **検針管理**: 検針値入力、日付・顧客ごと記録、過去データ表示
+- ✅ **請求自動生成**: 検針差分から自動計算、消費量マイナス値のスキップ、同一日重複排除
+- ✅ **料金計算**: 基本料金 + 従量料金 ＋ 税金（小数点対応）
+- ✅ **請求管理**: 請求一覧、入金状態表示、PDF ダウンロード
+- ✅ **PDF生成**: WeasyPrint による請求書 PDF 出力（A4 対応）
+- ✅ **監査ログ**: すべての操作を記録、タイムスタンプ付き
+- ✅ **バックアップ**: DB 自動バックアップ（gzip 圧縮）
+- ✅ **テスト**: 料金計算、請求生成、エッジケース（pytest）
+- ✅ **Deploy**: Docker/Compose、Gunicorn、Nginx、systemd、PostgreSQL対応
+
+---
+
+## 🧪 テスト実行方法
 
 ```bash
 pip install -r requirements.txt

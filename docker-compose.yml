@@ -1,11 +1,23 @@
 version: '3.8'
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gasu-web
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     environment:
+      - DEBUG=True
+      - DB_ENGINE=sqlite
       - DJANGO_SETTINGS_MODULE=web.settings
-    command: gunicorn web.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py create_demo &&
+             python manage.py runserver 0.0.0.0:8000"
+    stdin_open: true
+    tty: true
+
