@@ -1,175 +1,229 @@
-# gasu ⛽
-ガス料金管理システム - 高齢者にも使いやすいシンプル設計
+# ⛽ ガス料金管理システム
+
+**親御さんの顧客管理を簡単に。検針から請求まで、すべてボタン一つ。**
 
 ---
 
-## 🚀 クイックスタート（3つの方法）
+## 📱 このアプリでできること
 
-### ⚡ **最速：Streamlit Cloud で無料・ワンクリック起動**
-
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/cloud)
-
-**推奨：高齢者にも最適なシンプルな UI**
-
-1. [gasu リポジトリをフォーク](https://github.com/maouM-cmd/gasu/fork)
-
-2. [Streamlit Cloud](https://streamlit.io/cloud) にアクセス
-
-3. **「New app」→「Deploy an app」** を選択
-
-4. フォークしたリポを入力:
-   ```
-   https://github.com/{your-username}/gasu
-   App URL: streamlit_app.py
-   ```
-
-5. **Deploy** をクリック → **即座に公開 URL が生成** 🎉
-
-**デモ顧客は自動作成されます**（初回アクセス時は 初期状態）
+| 機能 | 説明 |
+|---|---|
+| **👥 顧客管理** | 顧客の名前、住所、電話番号などを保存 |
+| **📏 検針入力** | 毎月のガス検針値を日付付きで記録 |
+| **🧮 請求自動生成** | 検針差分から自動で料金を計算して請求を作成 |
+| **💰 入金管理** | 誰がいつ払ったか、一目で分かる |
+| **📊 一覧表示** | 顧客と請求をシンプルに表示 |
 
 ---
 
-### 🐳 **Docker Compose で一瞬で起動**
+## 🎯 最初に試す（初心者向け）
 
-```bash
-cd /workspaces/gasu
-docker-compose up --build
-```
+### **方法1️⃣：オンラインで今すぐ試す（推奨！ 最も簡単）**
 
-ブラウザ: **http://localhost:8000**
-1. フォークしたリポを入力:
-   ```
-   https://github.com/{your-username}/gasu
-   App URL: streamlit_app.py
-   ```
+**セットアップ不要。ブラウザだけあれば OK！**
 
-2. **Deploy** をクリック → **即座に公開 URL が生成** 🎉
+#### ステップ1：GitHub にログイン
+- https://github.com にアクセス
+- ない場合は新規登録（30秒）
+
+#### ステップ2：このプロジェクトをコピーする
+- [このリンクをクリック](https://github.com/maouM-cmd/gasu/fork)
+- **「Create fork」をクリック**
+- 少し待つ...
+
+#### ステップ3：Streamlit Cloud に登録
+- https://streamlit.io/cloud にアクセス
+- 「Sign in with GitHub」をクリック
+- GitHub でログイン
+
+#### ステップ4：アプリをデプロイする
+- 「New app」をクリック
+- 以下を入力:
+  - **Repository**: `maouM-cmd/gasu` (またはあなたのフォークしたもの)
+  - **Branch**: `main`
+  - **Main file path**: `streamlit_app.py`
+  - **App URL**: 好きな URL（例：`my-gas-app`）
+- **「Deploy」をクリック**
+
+#### ステップ5：起動完了！🎉
+- 1分待つと、自分だけの URL が出現
+- ブックマークして使い続ける
+
+**これで、どこからでもアクセス可能です！**
 
 ---
 
-### 💻 ローカル仮想環境で起動（開発者向け）
+### **方法2️⃣：インストール版（自分のパソコンで動かしたい場合）**
 
-```bash
-pip install -r requirements-streamlit.txt
-streamlit run streamlit_app.py
-```
+#### 必要なもの
+- Windows/Mac/Linux
+- Python 3.9 以上（[ダウンロード](https://www.python.org/)）
 
-ブラウザ: **http://localhost:8501**
+#### セットアップ（コマンドラインが初めての人）
+1. **フォルダを作成**
+   ```bash
+   mkdir my-gas-app
+   cd my-gas-app
+   ```
+
+2. **プロジェクトをダウンロード**
+   ```bash
+   git clone https://github.com/maouM-cmd/gasu.git .
+   ```
+
+3. **Python 環境を準備**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # Mac/Linux
+   # または
+   .venv\Scripts\activate     # Windows
+   ```
+
+4. **パッケージをインストール**
+   ```bash
+   pip install -r requirements-streamlit.txt
+   ```
+
+5. **アプリを起動**
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+
+6. **ブラウザが自動で開きます**
+   - http://localhost:8501
 
 ---
 
-## 📊 実装済み機能
+## 📊 何が入ってるの？
+
+✅ **顧客一覧**: 登録した全顧客と基本情報  
+✅ **顧客登録**: 新しい顧客を追加  
+✅ **検針入力**: 毎月の検針値を記録  
+✅ **請求管理**: 自動計算→入金記録  
+✅ **大きなボタン**: 高齢者でも使いやすい  
+✅ **シンプルメニュー**: ゴチャゴチャしない  
+
+---
+
+## 🆚 他の方法との比較
+
+| | **Streamlit Cloud** | **インストール版** |
+|---|---|---|
+| **セットアップ** | ☁️ 不要 | 💻 20分 |
+| **毎月の費用** | 無料 | 無料 |
+| **どこからアクセス** | 📱 どこからでも | 💻 そのパソコンのみ |
+| **推奨** | 👴👵 親御さん向け | 🧑‍💻 開発者向け |
+
+---
+
+## 🎨 実装済み機能
 
 - ✅ **📊 顧客一覧**: 登録済みの全顧客を表示
 - ✅ **👤 顧客登録**: 新規顧客の追加（基本料金・単価・税率設定）
 - ✅ **📏 検針入力**: 検針値の記録、日付管理
 - ✅ **💵 請求管理**: 自動生成、入金記録、一覧表示
 - ✅ **🔄 自動計算**: 検針差分から料金を自動計算
-- ✅ **💾 SQLite DB**: ローカルに永続化（クラウド対応）
+- ✅ **💾 データ保存**: すべてローカルで安全に保存
 - ✅ **🎯 高齢者UI**: シンプル・大きなボタン・直感的操作
 
 ---
 
-## 📁 ディレクトリ構成
+## 💻 ローカル開発（開発者向け）
 
-```
-gasu/
-├── streamlit_app.py           # 🌟 Streamlit メインアプリ
-├── requirements-streamlit.txt # Streamlit 用依存
-├── .streamlit/
-│   └── config.toml           # Streamlit 設定（テーマ等）
-│
-├── web/                       # Django プロジェクト（代替案）
-├── billing/                   # Django アプリ
-├── docker-compose.yml         # Docker 設定
-└── README.md                  # この ファイル
-```
-
----
-
-## 🔧 Django 版も利用可能
-
-Streamlit の代わりに Django を使う場合：
-
-```bash
-# Django 版起動
-docker-compose up --build
-```
-
-→ ログイン画面有、PDF 生成機能あり、より高度な機能
-
----
-
-## ローカルでの起動手順（開発者向け・詳細）
-1. 仮想環境を作る（推奨）
+### 仮想環境セットアップ
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # Mac/Linux
+# または
+.venv\Scripts\activate     # Windows
+
 pip install -r requirements-streamlit.txt
 ```
 
-2. Streamlit アプリを起動
+### Streamlit アプリを起動
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-ブラウザ: **http://localhost:8501** に自動で開きます
+→ ブラウザ: http://localhost:8501
 
----
-
-## 🎯 使途別ガイド
-
-### 親御さん・ユーザー向け
-→ **Streamlit Cloud で公開 URL をクリック**（推奨）
-- セットアップ不要
-- いつでもアクセス可能
-- シンプルな操作
-
-### 開発者向け（ローカル開発）
-```bash
-streamlit run streamlit_app.py
-```
-
-### 小規模ビジネス向け（本番環境）
-→ **Render.com（クラウド）** または **VPS（自前）**:
-
-```bash
-docker-compose up -d
-```
-
----
-- ✅ **バックアップ**: DB 自動バックアップ（gzip 圧縮）
-- ✅ **テスト**: 料金計算、請求生成、エッジケース（pytest）
-- ✅ **Deploy**: Docker/Compose、Gunicorn、Nginx、systemd、PostgreSQL対応
-
----
-
-## 🧪 テスト実行方法
+### Django アプリを起動（詳細機能版）
 
 ```bash
 pip install -r requirements.txt
-pytest -q
+python manage.py migrate
+python manage.py runserver
 ```
 
-## Docker での起動（簡易）
+→ ブラウザ: http://127.0.0.1:8000
+
+---
+
+## 📊 使途別ガイド
+
+| 用途 | 推奨方法 | 難易度 |
+|---|---|---|
+| 親御さん（最初から） | Streamlit Cloud | ⭐ 超簡単 |
+| 親御さん（初心者向け） | インストール版 | ⭐☆ 簡単 |
+| 開発者（カスタマイズしたい） | ローカル Streamlit | ⭐☆☆ 中程度 |
+| 自分で本番環境を構築 | Django + Docker | ⭐☆☆☆ 高度 |
+
+---
+
+## 🧪 テストを実行
 
 ```bash
-# ビルドして起動
-docker compose up --build
-# コンテナ内部でマイグレーション
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py create_demo
+pip install -r requirements.txt
+pytest -v
 ```
 
-## バックアップ
-- SQLite を使う場合は `python manage.py backup_db` で `backups/` 配下に gz 圧縮されたダンプが作成されます。
+成功例：
+```
+tests/test_billing_tariff.py::test_calculate_invoice_amounts PASSED
+tests/test_integration_generate_invoices.py::test_generate_invoices PASSED
+```
 
+---
 
-（`tests/test_billing_tariff.py` に料金計算の単体テストがあります）
+## 🐳 Docker で本番環境をシミュレート
 
-## 次フェーズ（優先順）
+```bash
+docker-compose up --build
+```
+
+→ http://localhost:8000
+
+---
+
+## 📁 プロジェクト構成
+
+```
+gasu/
+├── streamlit_app.py             # Streamlit UI（推奨）
+├── web/                         # Django プロジェクト
+│   ├── settings.py              # 開発設定
+│   ├── settings_prod.py         # 本番設定
+│   └── wsgi.py                  # WSGI エントリーポイント
+├── billing/                     # ビジネスロジック
+│   ├── models.py                # データモデル
+│   ├── views.py                 # Django ビュー
+│   ├── tariff.py                # 料金計算ロジック
+│   ├── utils.py                 # ユーティリティ関数
+│   └── management/commands/     # 管理コマンド
+├── templates/                   # Django HTML テンプレート
+├── tests/                       # テストコード
+├── deploy/                      # デプロイ設定
+│   ├── nginx.conf               # Nginx 設定
+│   └── gasu.service             # systemd サービス
+├── docker-compose.yml           # Docker Compose 設定
+└── requirements.txt             # Python 依存パッケージ
+```
+
+---
+
+## 🔧 本番環境へのデプロイ（上級者向け）
 1. 顧客作成・編集フローの実装（フォーム／検針の過去データ表示）
 2. 請求計算の自動化（検針差分から請求作成）と請求の一括発行ワークフロー
 3. PDFレイアウト調整と印刷検証（A4、改ページ、フォント）
@@ -466,7 +520,112 @@ psql -U gasu_user -d gasu_db -h localhost
 
 ---
 
-## 🌐 Render.com へのワンクリックデプロイ
+## ❓ よくある質問（Q&A）
+
+### Q: 無料ですか？
+**A:** はい、完全無料です。Streamlit Cloud も無料枠があります。
+
+### Q: インターネット接続がないパソコンでも使えますか？
+**A:** はい。「インストール版」を選べば、インターネット不要です（セットアップ時のみ必要）。
+
+### Q: データは安全ですか？
+**A:** はい。データはあなたのパソコンまたはクラウド上に保存され、外部に送信されません。
+
+### Q: バックアップはどうする？
+**A:** 
+- **Streamlit Cloud版**: 自動バックアップあり
+- **インストール版**: ファイルをコピーするだけ（`gas_billing.db` ファイルをバックアップ）
+
+### Q: スマホでも使えますか？
+**A:** はい。Streamlit Cloud版なら、スマホのブラウザ（Safari/Chrome）で使えます。
+
+### Q: 開発者向けの詳細情報は？
+**A:** このREADMEの下の方に技術詳細があります。
+
+---
+
+## 🆘 トラブルシューティング
+
+### 問題1：「Python が見つかりません」と言われた
+解決策：
+1. https://www.python.org/ からダウンロード
+2. **「Add Python to PATH」にチェック**を入れてインストール
+3. コマンドラインを再起動
+
+### 問題2：Streamlit Cloud でデプロイが失敗した
+解決策：
+1. ブランチが `main` になっているか確認
+2. メインファイルが `streamlit_app.py` か確認
+3. 5分待ってみる（デプロイ中かもしれません）
+
+### 問題3：データが消えた
+解決策（インストール版）：
+- `gas_billing.db` ファイルは？を確認
+- なければ、バックアップから復元
+
+### 問題4：ボタンが反応しない
+解決策：
+1. ページをリロード（F5 キー）
+2. ブラウザを変える（Chrome推奨）
+
+---
+
+## 📞 サポート
+
+問題が起きた場合：
+1. 上の「トラブルシューティング」を確認
+2. GitHub Issues で報告: https://github.com/maouM-cmd/gasu/issues/new
+
+---
+
+## 🔧 開発者向け情報
+
+### ディレクトリ構成
+
+```
+gasu/
+├── streamlit_app.py            # Streamlit アプリ本体
+├── requirements-streamlit.txt  # Python パッケージ一覧
+├── .streamlit/
+│   └── config.toml            # UI テーマ設定
+│
+├── web/                        # Django プロジェクト（別UI）
+├── billing/                    # ビジネスロジック
+├── docker-compose.yml          # Docker 設定
+└── README.md                   # このファイル
+```
+
+### 技術スタック
+- **Web Framework**: Streamlit (フロントエンド) + Django (バックエンド)
+- **Database**: SQLite（開発） / PostgreSQL（本番）
+- **Language**: Python 3.9+
+- **Deployment**: Streamlit Cloud / Render.com / VPS
+
+### ローカル開発
+
+```bash
+# Streamlit版
+streamlit run streamlit_app.py
+
+# Django版
+python manage.py runserver
+```
+
+### テスト実行
+```bash
+pytest -v
+```
+
+---
+
+## 📄 ライセンス
+
+このプロジェクトは MIT ライセンスの下で公開されています。
+
+---
+
+**🌟 このプロジェクトが役に立ったら、GitHub Star をお願いします！**
+
 
 ### セットアップ（初回のみ）
 
