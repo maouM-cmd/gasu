@@ -1,6 +1,5 @@
 # gasu
-## Codex task
-- https://chatgpt.com/codex/tasks/task_e_698ae0ddfacc83299851433789f0e2d
+# Codex task
 
 ## ステータス
 - 現状: CLIで動くMVPコアまで実装済み
